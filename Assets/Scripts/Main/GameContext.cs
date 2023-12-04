@@ -1,4 +1,5 @@
-﻿using Config;
+﻿using Common;
+using Config;
 using System;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace Main
         public LevelConfig LevelConfig { get; private set; } = null;
         public LevelPrefabsStorage LevelPrefabsStorage => levelPrefabsStorage;
         public Grid Grid { get; private set; } = null;
+        public Spawner Spawner { get; private set; } = null;
 
 
         private void Awake()
@@ -53,9 +55,14 @@ namespace Main
                 throw new Exception("Game Context already initialized.");
 
             LevelConfig = levelConfigProvider.Provide();
-            Grid = new GameObject("Grid").AddComponent<Grid>();
 
+            Grid = new GameObject("Grid").AddComponent<Grid>();
             Grid.Initialize();
+
+            Spawner = LevelPrefabsStorage.spawner.Instantiate<Spawner>();
+            var spawnerCell = Grid.GetCell(Vector2.zero);
+            spawnerCell.SetOccupier(Spawner);
+            Spawner.AnimateToCell();
 
             IsInitialized = true;
         }

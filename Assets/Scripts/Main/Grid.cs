@@ -57,5 +57,18 @@ namespace Main
         {
             return (WorldRect.position + Vector2.one * 0.5f) + cell;
         }
+
+        public Cell GetCell(int x, int y)
+        {
+            return _cells[x, y];
+        }
+        public Cell GetCell(Vector2Int cell)
+        {
+            return _cells[cell.x, cell.y];
+        }
+        public Cell GetCell(Vector2 world)
+        {
+            return GetCell(WorldToCell(world));
+        }
     }
 }
