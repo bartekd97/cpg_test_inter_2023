@@ -70,5 +70,15 @@ namespace Main
         {
             return GetCell(WorldToCell(world));
         }
+
+        public Cell FindNearbyFreeCell(Vector2Int cell)
+        {
+            var searcher = new ClockwiseGridSearcher(this, cell);
+            return searcher.TryGetNext();
+        }
+        public Cell FindNearbyFreeCell(Vector2 world)
+        {
+            return FindNearbyFreeCell(WorldToCell(world));
+        }
     }
 }

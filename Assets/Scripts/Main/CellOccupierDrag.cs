@@ -18,7 +18,7 @@ namespace Main
         }
         private void OnMouseUp()
         {
-            var cell = GameContext.Current.Grid.GetCell(transform.position);
+            var cell = GameContext.Current.Grid.FindNearbyFreeCell(transform.position);
             cell.SetOccupier(_occupier);
             _occupier.AnimateToCell();
         }
