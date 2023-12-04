@@ -22,6 +22,12 @@ namespace Main
                 Mathf.Max(Mathf.Abs(Center.y), Mathf.Abs(Center.y - Grid.Size.y))
             );
 
+            if (_index >= 0)
+            {
+                _index++;
+                IterateToNext();
+            }
+
             while (_index == -1 && _ring <= maxRings)
             {
                 _ring++;
