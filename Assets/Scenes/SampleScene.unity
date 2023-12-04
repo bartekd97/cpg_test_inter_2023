@@ -305,6 +305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelConfigProvider: {fileID: 11400000, guid: 81ff8b9c193b9794ba03db94c2766e79, type: 2}
+  levelPrefabsStorage: {fileID: 11400000, guid: cf236f815b02019468f1d211027e6768, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -11,9 +11,13 @@ namespace Main
 
         [Header("Configuration")]
         [SerializeField] LevelConfigProvider levelConfigProvider;
+        [SerializeField] LevelPrefabsStorage levelPrefabsStorage;
 
         public bool IsInitialized { get; private set; } = false;
         public LevelConfig LevelConfig { get; private set; } = null;
+        public LevelPrefabsStorage LevelPrefabsStorage => levelPrefabsStorage;
+        public Grid Grid { get; private set; } = null;
+
 
         private void Awake()
         {
@@ -46,9 +50,12 @@ namespace Main
         void Initialize()
         {
             if (IsInitialized)
-                throw new Exception("Already initialized.");
+                throw new Exception("Game Context already initialized.");
 
             LevelConfig = levelConfigProvider.Provide();
+            Grid = new GameObject("Grid").AddComponent<Grid>();
+
+            Grid.Initialize();
 
             IsInitialized = true;
         }

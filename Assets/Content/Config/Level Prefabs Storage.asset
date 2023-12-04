@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7773d8df708e254499b8ccf87f26cf9a, type: 3}
-  m_Name: Json Level Config Provider
+  m_Script: {fileID: 11500000, guid: f4324ff731452b244baa551e2fc98873, type: 3}
+  m_Name: Level Prefabs Storage
   m_EditorClassIdentifier: 
-  source: 1
-  value: 10x10.json
+  cell: {fileID: 3764690798355117203, guid: 7000b4719d5065c488705ca4b5e700cc, type: 3}
+  spawner: {fileID: 0}
+  ball: {fileID: 0}
