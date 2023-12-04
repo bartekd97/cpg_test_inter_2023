@@ -7,43 +7,12 @@ namespace Main
 {
     public class Spawner : CellOccupier
     {
-        ObjectPool<Ball> _ballPool = null;
         Coroutine _spawnerCoroutine = null;
-
-        private void Start()
-        {
-            var ballPrefab = GameContext.Current.LevelPrefabsStorage.ball;
-            _ballPool = new(
-                () => ballPrefab.Instantiate<Ball>(),
-                ball => { ball.gameObject.SetActive(true); },
-                ball => { ball.gameObject.SetActive(false); },
-                ball => { Destroy(ball.gameObject); },
-                false,
-                0,
-                GameContext.Current.Grid.Size.x * GameContext.Current.Grid.Size.y
-            );
-        }
 
         private void OnDisable()
         {
             StopSpawner();
         }
-
-        private void OnDestroy()
-        {
-            _ballPool?.Dispose();
-            _ballPool = null;
-        }
-
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-                StartSpawner();
-            if (Input.GetKeyUp(KeyCode.Space))
-                StopSpawner();
-        }
-
 
         public bool IsSpawnerActive()
         {
@@ -80,7 +49,7 @@ namespace Main
 
         void SpawnBall(Cell targetCell)
         {
-            var ball = _ballPool.Get();
+            var ball = GameContext.Current.BallPool.Get();
             ball.transform.position = transform.position;
 
             var variant = GameContext.Current.LevelConfig.ballVariants.GetRandom();

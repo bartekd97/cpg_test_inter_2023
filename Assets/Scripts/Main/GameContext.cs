@@ -1,7 +1,9 @@
 ﻿using Common;
 using Config;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Main
 {
@@ -19,7 +21,11 @@ namespace Main
         public LevelPrefabsStorage LevelPrefabsStorage => levelPrefabsStorage;
         public Grid Grid { get; private set; } = null;
         public Spawner Spawner { get; private set; } = null;
+        public IObjectPool<Ball> BallPool => _ballPool;
 
+
+        ObjectPool<Ball> _ballPool = null;
+        HashSet<Ball> _adjacentBalls = new();
 
         private void Awake()
         {
@@ -42,12 +48,12 @@ namespace Main
 
         private void OnDestroy()
         {
-            if (Current == this)
-            {
-                Current = null;
-            }
-        }
+            if (Current != this)
+                return;
 
+            _ballPool?.Dispose();
+            Current = null;
+        }
 
         void Initialize()
         {
@@ -64,7 +70,47 @@ namespace Main
             spawnerCell.SetOccupier(Spawner);
             Spawner.WarpToCell();
 
+            _ballPool = new(
+                () => LevelPrefabsStorage.ball.Instantiate<Ball>(),
+                ball => { ball.gameObject.SetActive(true); },
+                ball => { ball.gameObject.SetActive(false); },
+                ball => { Destroy(ball.gameObject); },
+                false,
+                0,
+                Grid.Size.x * Grid.Size.y
+            );
+
             IsInitialized = true;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+                Spawner.StartSpawner();
+            if (Input.GetKeyUp(KeyCode.Space))
+                Spawner.StopSpawner();
+
+            if (Input.GetKeyDown(KeyCode.C))
+                ClearAdjacentBalls();
+        }
+
+        public void MarkBallAdjacent(Ball ball)
+        {
+            _adjacentBalls.Add(ball);
+        }
+        public void UnmarkBallAdjacent(Ball ball)
+        {
+            _adjacentBalls.Remove(ball);
+        }
+
+        public void ClearAdjacentBalls()
+        {
+            foreach (var ball in _adjacentBalls)
+            {
+                ball.Cell.ClearOccupier(false);
+                _ballPool.Release(ball);
+            }
+            _adjacentBalls.Clear();
         }
     }
 }

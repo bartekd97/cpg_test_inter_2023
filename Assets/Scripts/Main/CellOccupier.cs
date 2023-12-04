@@ -8,7 +8,19 @@ namespace Main
         [Header("Cell Occupier config")]
         [SerializeField] float tweenTime = 0.2f;
 
-        public Cell Cell { get; set; }
+
+        Cell _cell;
+        public Cell RecentCell { get; private set; }
+        public Cell Cell
+        {
+            get => _cell;
+            set
+            {
+                RecentCell = _cell;
+                _cell = value;
+            }
+        }
+
         public bool IsOnCell => Cell != null;
 
 
@@ -48,6 +60,12 @@ namespace Main
             }
 
             transform.position = end;
+        }
+
+
+        public virtual void OnCellChanged()
+        {
+            //
         }
     }
 }

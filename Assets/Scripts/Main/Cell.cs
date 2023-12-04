@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Main
@@ -17,6 +18,8 @@ namespace Main
         public bool IsBlocked { get; private set; } = false;
         public bool HasOccupier => Occupier != null;
         public bool IsFree => !IsBlocked && !HasOccupier;
+
+        List<Cell> _neighbours = null;
 
         public void Initialize(Vector2Int position)
         {
@@ -50,7 +53,7 @@ namespace Main
             }
         }
 
-        public void SetOccupier(CellOccupier occupier)
+        public void SetOccupier(CellOccupier occupier, bool notify = true)
         {
             if (HasOccupier)
                 throw new Exception($"There is already an occupier on cell {gameObject.name}");
@@ -59,14 +62,39 @@ namespace Main
 
             Occupier = occupier;
             occupier.Cell = this;
+
+            if (notify)
+                occupier.OnCellChanged();
         }
-        public void ClearOccupier()
+        public void ClearOccupier(bool notifyChanges = true)
         {
             if (!HasOccupier)
                 throw new Exception($"There is no occupier on cell {gameObject.name}");
 
+            var occupier = Occupier;
+
             Occupier.Cell = null;
             Occupier = null;
+
+            if (notifyChanges)
+                occupier.OnCellChanged();
+        }
+
+        public IReadOnlyList<Cell> GetNeighbours()
+        {
+            if (_neighbours == null)
+            {
+                var grid = GameContext.Current.Grid;
+
+                _neighbours = new(4);
+
+                if (Position.y < grid.Size.y - 1) _neighbours.Add(grid.GetCell(Position + Vector2Int.up));
+                if (Position.x < grid.Size.x - 1) _neighbours.Add(grid.GetCell(Position + Vector2Int.right));
+                if (Position.y > 0) _neighbours.Add(grid.GetCell(Position + Vector2Int.down));
+                if (Position.x > 0) _neighbours.Add(grid.GetCell(Position + Vector2Int.left));
+            }
+
+            return _neighbours;
         }
     }
 }
