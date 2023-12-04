@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cell: {fileID: 3764690798355117203, guid: 7000b4719d5065c488705ca4b5e700cc, type: 3}
   spawner: {fileID: 1249755478932335006, guid: 7dd90323cf539394e8bb6da89e0e6272, type: 3}
-  ball: {fileID: 0}
+  ball: {fileID: 3807906413064443752, guid: 83d5b64d0847f5a429d6629ea99e379f, type: 3}

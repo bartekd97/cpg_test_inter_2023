@@ -62,7 +62,7 @@ namespace Main
             Spawner = LevelPrefabsStorage.spawner.Instantiate<Spawner>();
             var spawnerCell = Grid.FindNearbyFreeCell(Vector2.zero);
             spawnerCell.SetOccupier(Spawner);
-            Spawner.AnimateToCell();
+            Spawner.WarpToCell();
 
             IsInitialized = true;
         }

@@ -5,6 +5,7 @@ namespace Main
 {
     public abstract class CellOccupier : MonoBehaviour
     {
+        [Header("Cell Occupier config")]
         [SerializeField] float tweenTime = 0.2f;
 
         public Cell Cell { get; set; }
@@ -32,7 +33,6 @@ namespace Main
 
             _tweenToCell = StartCoroutine(TweenToCell());
         }
-
 
         IEnumerator TweenToCell()
         {

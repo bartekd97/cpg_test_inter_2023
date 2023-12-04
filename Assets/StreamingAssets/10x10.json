@@ -1,7 +1,7 @@
 {
     "gridSetup": {
-        "width": 10,
-        "height": 10,
+        "width": 50,
+        "height": 50,
         "blockChance": 0.25,
         "seed": 0
     },
