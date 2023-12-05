@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Json Level Config Provider
   m_EditorClassIdentifier: 
   source: 1
-  value: 10x10.json
+  value: 50x50.json

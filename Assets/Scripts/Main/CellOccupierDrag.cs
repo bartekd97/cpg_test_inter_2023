@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Main
 {
     [RequireComponent(typeof(CellOccupier))]
-    public class CellOccupierDrag : MonoBehaviour
+    public class CellOccupierDrag : MonoBehaviour,
+        IBeginDragHandler,
+        IDragHandler,
+        IEndDragHandler
     {
         CellOccupier _occupier = null;
         private void Awake()
@@ -11,26 +15,25 @@ namespace Main
             _occupier = GetComponent<CellOccupier>();
         }
 
-        private void OnMouseDown()
+        void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
         {
             _occupier.Cell.ClearOccupier();
-            SetToCursor();
+            SetToCursor(eventData);
         }
-        private void OnMouseUp()
+        void IDragHandler.OnDrag(PointerEventData eventData)
+        {
+            SetToCursor(eventData);
+        }
+        void IEndDragHandler.OnEndDrag(PointerEventData eventData)
         {
             var cell = GameContext.Current.Grid.FindNearbyFreeCell(transform.position);
             cell.SetOccupier(_occupier);
             _occupier.AnimateToCell();
         }
-        private void OnMouseDrag()
-        {
-            SetToCursor();
-        }
 
-        void SetToCursor()
+        void SetToCursor(PointerEventData eventData)
         {
-            var cursor = Input.mousePosition;
-            var world = (Vector2)Camera.main.ScreenToWorldPoint(cursor);
+            var world = (Vector2)(GameContext.Current.CameraController.Camera.ScreenToWorldPoint(eventData.position));
             transform.position = world;
         }
     }

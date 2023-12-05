@@ -16,11 +16,15 @@ namespace Main
         [SerializeField] LevelConfigProvider levelConfigProvider;
         [SerializeField] LevelPrefabsStorage levelPrefabsStorage;
 
+        [Header("Dependencies")]
+        [SerializeField] CameraController cameraController;
+
         public bool IsInitialized { get; private set; } = false;
         public LevelConfig LevelConfig { get; private set; } = null;
         public LevelPrefabsStorage LevelPrefabsStorage => levelPrefabsStorage;
         public Grid Grid { get; private set; } = null;
         public Spawner Spawner { get; private set; } = null;
+        public CameraController CameraController => cameraController;
         public IObjectPool<Ball> BallPool => _ballPool;
 
 
@@ -52,6 +56,8 @@ namespace Main
                 return;
 
             _ballPool?.Dispose();
+            _ballPool = null;
+
             Current = null;
         }
 
@@ -74,11 +80,13 @@ namespace Main
                 () => LevelPrefabsStorage.ball.Instantiate<Ball>(),
                 ball => { ball.gameObject.SetActive(true); },
                 ball => { ball.gameObject.SetActive(false); },
-                ball => { Destroy(ball.gameObject); },
+                ball => { if (ball) Destroy(ball.gameObject); },
                 false,
                 0,
                 Grid.Size.x * Grid.Size.y
             );
+
+            CameraController.SetArea(Grid.WorldRect);
 
             IsInitialized = true;
         }
