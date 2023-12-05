@@ -1,4 +1,5 @@
 ﻿using Common;
+using Messaging;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -26,12 +27,15 @@ namespace Main
         {
             Camera = GetComponent<Camera>();
         }
-
-        private void Update()
+        private void OnEnable()
         {
-            if (Input.GetKeyDown(KeyCode.KeypadPlus)) SetZoom(Zoom + 0.2f);
-            if (Input.GetKeyDown(KeyCode.KeypadMinus)) SetZoom(Zoom - 0.2f);
+            SignalBus.AddListener<CameraZoomSignal>(OnCameraZoomSignal);
         }
+        private void OnDisable()
+        {
+            SignalBus.RemoveListener<CameraZoomSignal>(OnCameraZoomSignal);
+        }
+
 
         public void SetArea(Rect area)
         {
@@ -104,5 +108,8 @@ namespace Main
             var delta = to - from;
             MoveCameraTo(transform.position - delta);
         }
+
+        void OnCameraZoomSignal(CameraZoomSignal signal)
+            => SetZoom(signal.targetZoom);
     }
 }

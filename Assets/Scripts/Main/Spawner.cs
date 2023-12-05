@@ -1,5 +1,6 @@
 ﻿using Common;
 using Main.Algorithm;
+using Messaging;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -10,9 +11,17 @@ namespace Main
     {
         Coroutine _spawnerCoroutine = null;
 
+        private void OnEnable()
+        {
+            SignalBus.AddListener<StartSpawnerSignal>(OnSpawnerSignal);
+            SignalBus.AddListener<StopSpawnerSignal>(OnSpawnerSignal);
+        }
         private void OnDisable()
         {
             StopSpawner();
+
+            SignalBus.RemoveListener<StartSpawnerSignal>(OnSpawnerSignal);
+            SignalBus.RemoveListener<StopSpawnerSignal>(OnSpawnerSignal);
         }
 
         public bool IsSpawnerActive()
@@ -59,5 +68,11 @@ namespace Main
             targetCell.SetOccupier(ball);
             ball.AnimateToCell();
         }
+
+
+        void OnSpawnerSignal(StartSpawnerSignal _)
+            => StartSpawner();
+        void OnSpawnerSignal(StopSpawnerSignal _)
+            => StopSpawner();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Config;
+using Messaging;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,8 +27,10 @@ namespace Main
         public Spawner Spawner { get; private set; } = null;
         public CameraController CameraController => cameraController;
         public IObjectPool<Ball> BallPool => _ballPool;
+        public IReadOnlyList<Ball> ActiveBalls => _activeBalls;
 
 
+        List<Ball> _activeBalls = new();
         ObjectPool<Ball> _ballPool = null;
         HashSet<Ball> _adjacentBalls = new();
 
@@ -44,10 +47,19 @@ namespace Main
 
         private void Start()
         {
-            if (Current == this)
-            {
-                Initialize();
-            }
+            if (Current != this)
+                return;
+
+            Initialize();
+        }
+
+        private void OnEnable()
+        {
+            SignalBus.AddListener<ClearBallsSignal>(OnClearBallsSignal);
+        }
+        private void OnDisable()
+        {
+            SignalBus.RemoveListener<ClearBallsSignal>(OnClearBallsSignal);
         }
 
         private void OnDestroy()
@@ -78,8 +90,8 @@ namespace Main
 
             _ballPool = new(
                 () => LevelPrefabsStorage.ball.Instantiate<Ball>(),
-                ball => { ball.gameObject.SetActive(true); },
-                ball => { ball.gameObject.SetActive(false); },
+                ball => { ball.gameObject.SetActive(true); _activeBalls.Add(ball); },
+                ball => { ball.gameObject.SetActive(false); _activeBalls.Remove(ball); },
                 ball => { if (ball) Destroy(ball.gameObject); },
                 false,
                 0,
@@ -91,17 +103,6 @@ namespace Main
             IsInitialized = true;
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-                Spawner.StartSpawner();
-            if (Input.GetKeyUp(KeyCode.Space))
-                Spawner.StopSpawner();
-
-            if (Input.GetKeyDown(KeyCode.C))
-                ClearAdjacentBalls();
-        }
-
         public void MarkBallAdjacent(Ball ball)
         {
             _adjacentBalls.Add(ball);
@@ -111,14 +112,18 @@ namespace Main
             _adjacentBalls.Remove(ball);
         }
 
-        public void ClearAdjacentBalls()
+        public void ClearBalls(bool adjacentOnly)
         {
-            foreach (var ball in _adjacentBalls)
+            IEnumerable<Ball> collection = adjacentOnly ? _adjacentBalls : _activeBalls.ToArray();
+            foreach (var ball in collection)
             {
                 ball.Cell.ClearOccupier(false);
                 _ballPool.Release(ball);
             }
             _adjacentBalls.Clear();
         }
+
+        void OnClearBallsSignal(ClearBallsSignal signal)
+            => ClearBalls(signal.adjacentOnly);
     }
 }
