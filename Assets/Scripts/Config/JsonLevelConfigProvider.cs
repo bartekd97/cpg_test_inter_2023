@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Config
 {
@@ -16,15 +18,15 @@ namespace Config
         public Source source;
         public string value;
 
-        public override LevelConfig Provide()
+        public async override Task<LevelConfig> Provide()
         {
-            var json = GetJSON();
+            var json = await GetJSON();
             var config = new LevelConfig();
             JsonUtility.FromJsonOverwrite(json, config);
             return config;
         }
 
-        string GetJSON()
+        async Task<string> GetJSON()
         {
             switch (source)
             {
@@ -36,7 +38,17 @@ namespace Config
                 case Source.StreamingAssetsFile:
                     {
                         var path = Path.Combine(Application.streamingAssetsPath, value);
+#if UNITY_ANDROID
+                        var request = UnityWebRequest.Get(path);
+                        request.SendWebRequest();
+
+                        while (!request.isDone)
+                            await Task.Delay(1);
+
+                        var json = request.downloadHandler.text;
+#else
                         var json = File.ReadAllText(path);
+#endif
                         return json;
                     }
             }

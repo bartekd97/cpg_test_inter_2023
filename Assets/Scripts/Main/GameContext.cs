@@ -73,12 +73,12 @@ namespace Main
             Current = null;
         }
 
-        void Initialize()
+        async void Initialize()
         {
             if (IsInitialized)
                 throw new Exception("Game Context already initialized.");
 
-            LevelConfig = levelConfigProvider.Provide();
+            LevelConfig = await levelConfigProvider.Provide();
 
             Grid = new GameObject("Grid").AddComponent<Grid>();
             Grid.Initialize();

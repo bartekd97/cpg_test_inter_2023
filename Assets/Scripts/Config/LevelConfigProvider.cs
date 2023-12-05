@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Config
 {
     public abstract class LevelConfigProvider : ScriptableObject
     {
-        public abstract LevelConfig Provide();
+        public abstract Task<LevelConfig> Provide();
     }
 }
