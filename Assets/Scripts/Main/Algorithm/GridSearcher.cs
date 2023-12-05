@@ -1,10 +1,10 @@
-﻿namespace Main
+﻿namespace Main.Algorithm
 {
     public abstract class GridSearcher
     {
         public Grid Grid { get; private set; }
 
-        public abstract Cell TryGetNext();
+        public abstract Cell FindNext();
 
         protected GridSearcher(Grid grid)
         {

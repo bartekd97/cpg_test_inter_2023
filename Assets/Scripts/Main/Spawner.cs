@@ -1,4 +1,5 @@
 ﻿using Common;
+using Main.Algorithm;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -38,7 +39,7 @@ namespace Main
 
             while (true)
             {
-                var cell = searcher.TryGetNext();
+                var cell = searcher.FindNext();
                 if (cell != null)
                 {
                     SpawnBall(cell);

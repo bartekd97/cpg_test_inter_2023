@@ -1,4 +1,5 @@
 ﻿using Common;
+using Main.Algorithm;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -71,14 +72,10 @@ namespace Main
             return GetCell(WorldToCell(world));
         }
 
-        public Cell FindNearbyFreeCell(Vector2Int cell)
-        {
-            var searcher = new ClockwiseGridSearcher(this, cell);
-            return searcher.TryGetNext();
-        }
         public Cell FindNearbyFreeCell(Vector2 world)
         {
-            return FindNearbyFreeCell(WorldToCell(world));
+            var searcher = new NearbyGridSearcher(this, world);
+            return searcher.FindNext();
         }
     }
 }
